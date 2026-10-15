@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#eee7df">
-<title>Hanami — a little world in bloom</title>
+<title>Hanami — Voxel Atlas</title>
 <style>
 :root{color-scheme:light;--ink:#344b45;--muted:#7b8274;--line:rgba(67,80,67,.18);--glass:rgba(255,253,244,.78)}
 *{box-sizing:border-box}body{margin:0;overflow:hidden;background:#eee7df;color:var(--ink);font-family:Arial,Helvetica,sans-serif;transition:color .7s}canvas{display:block;touch-action:none;outline:none;cursor:grab}canvas:active{cursor:grabbing}canvas:focus-visible{outline:2px solid #a56363;outline-offset:-5px}
@@ -13,14 +13,19 @@ footer{position:absolute;left:46px;bottom:31px;font-size:10px;line-height:1.9;le
 @media(max-width:850px){header{top:28px;left:25px}h1{font-size:58px}.edition{right:25px;top:29px}.tag{right:23px}footer{left:25px;bottom:23px}.help{right:25px;bottom:23px}.toolbar{bottom:80px}header p{font-size:11px}}
 @media(max-width:520px){h1{font-size:51px;margin-top:15px}.edition{font-size:8px;letter-spacing:1px}.edition svg{display:none}.eyebrow{font-size:8px;letter-spacing:2.5px}.tag{display:none}header p{max-width:170px;font-size:10px}.toolbar{bottom:74px;gap:0;padding:5px}button{padding:12px 10px;gap:5px;font-size:10px}button svg{width:15px}.help{font-size:9px}.help .desktop{display:none}footer{font-size:9px}footer b{font-size:9px}.toast{bottom:134px;white-space:nowrap}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.scene-selector{position:absolute;top:265px;left:42px;width:172px;display:flex;flex-direction:column;gap:6px;pointer-events:auto}.scene-button{padding:12px 10px;border:1px solid transparent;text-align:left;gap:10px;border-radius:12px}.scene-button[aria-pressed=true]{background:var(--glass);border-color:var(--line);box-shadow:0 6px 24px #31433408}.scene-swatch{display:grid;place-items:center;width:32px;height:36px;border-radius:8px;background:var(--swatch);color:#fff;font:10px Georgia,serif;flex-shrink:0}.scene-button strong{font:18px Georgia,serif;display:block;font-weight:400}.scene-button small{display:block;font-size:9px;letter-spacing:1px;margin-top:5px;color:var(--muted)}.scene-dot{width:4px;height:4px;background:currentColor;border-radius:50%;margin-left:auto;opacity:0}.scene-button[aria-pressed=true] .scene-dot{opacity:1}
+@media(max-width:1100px){.edition{display:none}.scene-selector{top:28px;right:25px;left:auto;transform:none;width:auto;flex-direction:row;gap:5px}.scene-button{padding:9px 11px;background:var(--glass)}.scene-button strong{font-size:15px}.scene-button small{font-size:8px}.scene-swatch{width:23px;height:29px}.scene-dot{display:none}}
+@media(max-width:700px){.scene-selector{top:181px;left:18px;right:18px;}.scene-button{padding:9px 6px}.scene-button strong{font-size:15px}.scene-swatch{display:none}}
+@media(max-width:520px){.scene-selector{top:181px;width:calc(100% - 36px);gap:5px;justify-content:center}.scene-button{flex:1;padding:9px 5px;gap:4px;justify-content:center;min-width:0}.scene-swatch{display:none}.scene-button strong{font-size:15px}.scene-button small{letter-spacing:0;font-size:9px}.scene-button[aria-pressed=true]{box-shadow:inset 0 -2px #a36e83}h1{font-size:49px}}
 </style>
 </head>
 <body>
 <div class="loading" id="loading"><p>A little world is blooming.</p><small>Planting the last cherry tree</small></div>
 <div class="overlay">
-<header><div class="eyebrow">A little world in bloom</div><h1>Hanami<span>花見</span></h1><p>A thousand quiet details.<br>A moment beneath the blossoms.</p></header>
-<div class="edition"><svg viewBox="0 0 32 36" fill="none" stroke="currentColor" stroke-width="1"><path d="M16 1 31 9v18L16 35 1 27V9Z M1 9l15 9 15-9M16 18v17 M8 5l16 9v17M24 5 8 14v17"/></svg><div>Voxel gardens<br>Collection № 001</div></div>
-<div class="tag">Handcrafted in tiny cubes · Spring, forever</div>
+<header><div class="eyebrow">A collection of little worlds</div><h1>Hanami<span>花見</span></h1><p>A thousand quiet details.<br>A moment beneath the blossoms.</p></header>
+<div class="edition"><svg viewBox="0 0 32 36" fill="none" stroke="currentColor" stroke-width="1"><path d="M16 1 31 9v18L16 35 1 27V9Z M1 9l15 9 15-9M16 18v17 M8 5l16 9v17M24 5 8 14v17"/></svg><div>Voxel atlas<br>World 01 / 04</div></div>
+<nav class="scene-selector" id="sceneSelector" aria-label="选择场景 / Choose a scene"></nav><div class="tag">Four tiny worlds · One endless escape</div>
 <div class="toolbar" role="toolbar" aria-label="Garden controls">
 <button id="orbit" aria-pressed="false" title="Slowly orbit the garden (O)"><svg viewBox="0 0 20 20"><ellipse cx="10" cy="10" rx="8" ry="4" transform="rotate(-25 10 10)"/><path d="m14 2 3 2-1 3"/><circle cx="10" cy="10" r="1.5"/></svg><span>Orbit</span></button>
 <button id="petals" aria-pressed="true" title="Toggle drifting petals and water animation (P)"><svg viewBox="0 0 20 20"><path d="M10 10C-1 11 4 1 8 5 6-3 17 2 12 7c8-5 10 6 3 6 5 6-6 10-6 3-6 4-9-6-3-6Z"/></svg><span>Petals</span></button>
@@ -30,7 +35,7 @@ footer{position:absolute;left:46px;bottom:31px;font-size:10px;line-height:1.9;le
 <button id="capture" title="Save a PNG of the garden" aria-label="Save garden image"><svg viewBox="0 0 20 20"><path d="M3 5h3l1-2h6l1 2h3v12H3Z"/><circle cx="10" cy="10.5" r="3"/></svg></button>
 </div>
 <footer><b>THE BLOSSOM SANCTUARY</b><br><span id="voxelCount">A living voxel diorama</span></footer>
-<div class="help"><span class="desktop">Drag to orbit · Scroll to wander closer<br></span><span class="mobile">Pinch to zoom</span><span class="desktop"> · H to hide the frame</span></div>
+<div class="help"><span class="desktop">Drag to orbit · Scroll to wander closer<br></span><span class="mobile">Pinch to zoom</span><span class="desktop"> · 1–4 scenes · H hide UI</span></div>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <!-- Three.js r160 — Copyright 2010-2023 Three.js Authors.
@@ -73,6 +78,7 @@ const pick=a=>a[Math.floor(rnd()*a.length)];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const C={grass:['#87a967','#91af70','#9ab878','#7f9f60','#a4b979'],moss:['#4e755b','#66815a','#75975f'],soil:['#ac8270','#b28a76','#c2987e','#a07a69'],rock:['#9eaaa0','#b8bcb0','#89998f','#cad0bc'],pink:['#f6a5bc','#ffc7ce','#ee8faa','#ffd8d6','#e87f9e','#f9b3c4'],pine:['#426f61','#4f846a','#629375','#779c76'],roof:['#3d8380','#4b9690','#5aa7a0','#367573'],gold:'#d9b36d',red:'#af5149',redLight:'#d57561',wood:'#795449',dark:'#4c4741',cream:'#f4dcb2'};
 const scene=new THREE.Scene();
+const gardenGroup=new THREE.Group();gardenGroup.name="hanami";scene.add(gardenGroup);
 scene.background=new THREE.Color('#eee7df');
 const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
@@ -215,11 +221,12 @@ for(let i=0;i<25;i++){let x=2+rnd()*12,z=2+rnd()*9;if(!pond(x,z)||Math.abs(z-6)<
 for(let x of [-10,-7.6]){box(x,.55,12.5,.2,.9,.65,C.dark)}box(-8.8,1.05,12.5,3.4,.2,1.1,C.red);box(-9.2,1.19,12.5,.7,.08,.55,C.dark);v(-9.3,1.34,12.5,.22,C.cream);v(-8.95,1.3,12.5,.13,C.cream);
 // Static garden is rendered with a few instanced draw calls.
 const materials={solid:new THREE.MeshStandardMaterial({roughness:.91,metalness:0}),glow:new THREE.MeshStandardMaterial({roughness:.8,emissive:'#ffb64a',emissiveIntensity:.13}),water:new THREE.MeshStandardMaterial({roughness:.28,metalness:.18})};
+materials.glow.emissive.set('#ffffff');materials.glow.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\n#if defined(USE_COLOR) || defined(USE_INSTANCING_COLOR)\ntotalEmissiveRadiance *= vColor;\n#endif');};
 let voxelCount=0;
 for(const [kind,data] of Object.entries(batches)){
  const mesh=new THREE.InstancedMesh(cube,materials[kind],data.length);voxelCount+=data.length;
  data.forEach((b,i)=>{dummy.position.set(b[0],b[1],b[2]);dummy.scale.set(b[3],b[4],b[5]);dummy.rotation.set(0,b[7],0);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.setColorAt(i,new THREE.Color(b[6]));});
- mesh.castShadow=kind==='solid';mesh.receiveShadow=true;mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();scene.add(mesh);
+ mesh.castShadow=kind==='solid';mesh.receiveShadow=true;mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();gardenGroup.add(mesh);
 }
 // Large matte cyclorama and a soft contact shadow beneath the floating cutaway.
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(2000,2000),new THREE.MeshStandardMaterial({color:'#eee7df',roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-3.15;ground.receiveShadow=true;scene.add(ground);
@@ -227,17 +234,17 @@ const shadowCanvas=document.createElement('canvas');shadowCanvas.width=shadowCan
 const contact=new THREE.Mesh(new THREE.PlaneGeometry(59,47),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(shadowCanvas),transparent:true,depthWrite:false}));contact.rotation.x=-Math.PI/2;contact.position.y=-3.13;scene.add(contact);
 // Koi are little articulated voxel mosaics, swimming in looping paths under the bridge.
 const koi=[];
-function fish(cx,cz,phase,colors){const g=new THREE.Group();function part(x,z,w,d,c){const m=new THREE.Mesh(cube,new THREE.MeshStandardMaterial({color:c,roughness:.6}));m.position.set(x,0,z);m.scale.set(w,.09,d);g.add(m)}part(0,0,.27,.7,colors[0]);part(0,-.32,.21,.21,colors[1]);part(0,.43,.36,.2,colors[1]);part(.19,0,.17,.16,colors[0]);part(-.19,0,.17,.16,colors[0]);part(0,.09,.28,.2,colors[1]);g.position.y=.16;scene.add(g);koi.push({g,cx,cz,phase})}
+function fish(cx,cz,phase,colors){const g=new THREE.Group();function part(x,z,w,d,c){const m=new THREE.Mesh(cube,new THREE.MeshStandardMaterial({color:c,roughness:.6}));m.position.set(x,0,z);m.scale.set(w,.09,d);g.add(m)}part(0,0,.27,.7,colors[0]);part(0,-.32,.21,.21,colors[1]);part(0,.43,.36,.2,colors[1]);part(.19,0,.17,.16,colors[0]);part(-.19,0,.17,.16,colors[0]);part(0,.09,.28,.2,colors[1]);g.position.y=.16;gardenGroup.add(g);koi.push({g,cx,cz,phase})}
 fish(7,8.8,0,['#fff2cf','#d96c43']);fish(9,3.3,2,['#f2c763','#f7ebc7']);fish(5,9.3,4,['#efebd4','#4b615e']);fish(11,7.9,1,['#ee975c','#fff0d0']);
 // Drifting petal cubes and glints in the falling water.
 const petalCount=165,petalMesh=new THREE.InstancedMesh(cube,new THREE.MeshStandardMaterial({color:'#ffc1ce',roughness:1}),petalCount);petalMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);petalMesh.frustumCulled=false;scene.add(petalMesh);
 const petals=Array.from({length:petalCount},()=>({x:(rnd()-.5)*36,y:1+rnd()*13,z:(rnd()-.5)*28,s:.06+rnd()*.1,speed:.4+rnd()*.5,phase:rnd()*Math.PI*2}));
 const drops=new THREE.InstancedMesh(cube,new THREE.MeshBasicMaterial({color:'#daf6e6'}),24);drops.frustumCulled=false;scene.add(drops);
-const lampLights=lanterns.slice(0,6).map(([x,y,z])=>{const l=new THREE.PointLight('#ffbe6b',0,5,2);l.position.set(x,y,z);scene.add(l);return l});
+const lampLights=lanterns.slice(0,6).map(([x,y,z])=>{const l=new THREE.PointLight('#ffbe6b',0,5,2);l.position.set(x,y,z);gardenGroup.add(l);return l});
 // Camera controls: mouse, touch / pinch, and keyboard. Orthographic projection keeps the miniature look.
 let az=.69,el=.57,zoom=1,auto=false,motion=!matchMedia('(prefers-reduced-motion: reduce)').matches;
 let targetAz=az,targetEl=el,targetZoom=zoom;const center=new THREE.Vector3(0,5.6,0);
-function resize(){const a=innerWidth/innerHeight;let view=Math.max(57,57/a);camera.left=-view*a/2;camera.right=view*a/2;camera.top=view/2;camera.bottom=-view/2;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}
+function resize(){const a=innerWidth/innerHeight;let view=Math.max(innerWidth<700?84:57,57/a);camera.left=-view*a/2;camera.right=view*a/2;camera.top=view/2;camera.bottom=-view/2;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}
 addEventListener('resize',resize);resize();
 const pointers=new Map();let prevDist=0;
 renderer.domElement.addEventListener('pointerdown',e=>{renderer.domElement.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});auto=false;document.getElementById('orbit').setAttribute('aria-pressed','false');if(pointers.size===2){let p=[...pointers.values()];prevDist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y)}});
@@ -247,20 +254,116 @@ renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();targetZoom=c
 function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2400)}
 const orbitBtn=document.getElementById('orbit'),petalBtn=document.getElementById('petals');petalBtn.setAttribute('aria-pressed',String(motion));
 orbitBtn.onclick=()=>{auto=!auto;orbitBtn.setAttribute('aria-pressed',String(auto))};
-petalBtn.onclick=()=>{motion=!motion;petalBtn.setAttribute('aria-pressed',String(motion));petalMesh.visible=motion;drops.visible=motion};petalMesh.visible=motion;drops.visible=motion;
-document.getElementById('reset').onclick=()=>{targetAz=.69;targetEl=.57;targetZoom=1;auto=false;orbitBtn.setAttribute('aria-pressed','false');toast('Back to the garden view')};
+petalBtn.onclick=()=>{motion=!motion;petalBtn.setAttribute('aria-pressed',String(motion));updateEffects()};petalMesh.visible=motion;drops.visible=motion;
+document.getElementById('reset').onclick=()=>{targetAz=.69;targetEl=.57;targetZoom=1;auto=false;orbitBtn.setAttribute('aria-pressed','false');toast('View reset')};
 let lightMode=0;
 const lighting=[{name:'Daylight',bg:'#eee7df',sky:'#fff2d9',floor:'#889d9b',sun:'#fff0d5',sunI:3.1,hemi:2.15,exposure:1.23,emission:.13,pos:[-25,50,25]}, {name:'Golden hour',bg:'#e8c7b5',sky:'#ffd7ad',floor:'#8c829c',sun:'#ffb474',sunI:3.4,hemi:1.55,exposure:1.2,emission:.32,pos:[-36,23,18]}, {name:'Moonlight',bg:'#202e41',sky:'#9bbddf',floor:'#485c80',sun:'#a9c9ff',sunI:1.4,hemi:.9,exposure:1.05,emission:1.7,pos:[-20,40,-8]}];
-document.getElementById('light').onclick=()=>{lightMode=(lightMode+1)%3;const l=lighting[lightMode];scene.background.set(l.bg);ground.material.color.set(l.bg);hemi.color.set(l.sky);hemi.groundColor.set(l.floor);hemi.intensity=l.hemi;sun.color.set(l.sun);sun.intensity=l.sunI;sun.position.set(...l.pos);renderer.toneMappingExposure=l.exposure;materials.glow.emissiveIntensity=l.emission;lampLights.forEach(p=>p.intensity=lightMode===2?6:0);document.body.classList.toggle('night',lightMode===2);document.getElementById('lightLabel').textContent=l.name;renderer.shadowMap.needsUpdate=true;toast(l.name+' in the sanctuary')};
-document.getElementById('capture').onclick=()=>{renderer.render(scene,camera);renderer.domElement.toBlob(blob=>{if(!blob){toast('Could not save this view');return}const a=document.createElement('a'),url=URL.createObjectURL(blob);a.download='hanami-garden-'+['daylight','golden-hour','moonlight'][lightMode]+'.png';a.href=url;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('A little piece of spring, saved')},'image/png')};
+function applyLighting(){const l=lighting[lightMode];scene.background.set(l.bg);ground.material.color.set(l.bg);hemi.color.set(l.sky);hemi.groundColor.set(l.floor);hemi.intensity=l.hemi;sun.color.set(l.sun);sun.intensity=l.sunI;sun.position.set(...l.pos);renderer.toneMappingExposure=l.exposure;materials.glow.emissiveIntensity=l.emission;lampLights.forEach(p=>p.intensity=lightMode===2?6:0);document.body.classList.toggle('night',lightMode===2);document.getElementById('lightLabel').textContent=l.name;renderer.shadowMap.needsUpdate=true;}
+document.getElementById('light').onclick=()=>{lightMode=(lightMode+1)%3;applyLighting();toast(lighting[lightMode].name)};
+document.getElementById('capture').onclick=()=>{renderer.render(scene,camera);renderer.domElement.toBlob(blob=>{if(!blob){toast('Could not save this view');return}const a=document.createElement('a'),url=URL.createObjectURL(blob);a.download=worlds[activeWorld].id+'-voxel-'+['daylight','golden-hour','moonlight'][lightMode]+'.png';a.href=url;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('Scene saved as PNG')},'image/png')};
 addEventListener('keydown',e=>{if(e.target instanceof HTMLElement&&e.target.closest('button')&&[' ','Enter'].includes(e.key))return;const key=e.key.toLowerCase();if(['arrowleft','arrowright','arrowup','arrowdown','+','=','-'].includes(key)){e.preventDefault();if(key==='arrowleft')targetAz+=.12;if(key==='arrowright')targetAz-=.12;if(key==='arrowup')targetEl=clamp(targetEl+.08,.22,1.22);if(key==='arrowdown')targetEl=clamp(targetEl-.08,.22,1.22);if(key==='+'||key==='=')targetZoom=clamp(targetZoom*1.1,.6,2.5);if(key==='-')targetZoom=clamp(targetZoom/1.1,.6,2.5)}if(key==='h')document.body.classList.toggle('hidden');if(key==='o')orbitBtn.click();if(key==='p')petalBtn.click();if(key==='l')document.getElementById('light').click();if(key==='r')document.getElementById('reset').click()});
 document.getElementById('voxelCount').textContent=voxelCount.toLocaleString()+' colorful blocks · Endless spring';
+// Additional worlds share the cube geometry and renderer; generated once, cached on demand.
+const worlds=[
+ {id:'hanami',name:'Hanami',zh:'樱花庭园',sub:'花見',desc:'A thousand quiet details.<br>A moment beneath the blossoms.',label:'THE BLOSSOM SANCTUARY',accent:'#d690a5',particle:'#ffc1ce',effect:'Petals',mode:0},
+ {id:'alpine',name:'Alpine',zh:'雪山木屋',sub:'雪境',desc:'Warm windows. Silent mountains.<br>A tiny winter worth getting lost in.',label:'THE SNOWBOUND HIDEAWAY',accent:'#8bafc6',particle:'#ffffff',effect:'Snow',mode:0},
+ {id:'riviera',name:'Riviera',zh:'灯塔港湾',sub:'海岸',desc:'Salt in the air. Sun on the rooftops.<br>A postcard from the quieter coast.',label:'THE SUNLIT HARBOUR',accent:'#dda567',particle:'#fff0be',effect:'Breeze',mode:0},
+ {id:'neon',name:'Neon',zh:'霓虹都市',sub:'未来',desc:'Rain falls. A city dreams in color.<br>Somewhere just beyond tomorrow.',label:'THE MIDNIGHT DISTRICT',accent:'#b38bea',particle:'#86d9ff',effect:'Rain',mode:2}
+];
+let activeWorld=0;
+const worldCache=new Map([[0,{group:gardenGroup,count:voxelCount}]]);
+function bakeWorld(group){let count=0;for(const [kind,data] of Object.entries(batches)){if(!data.length)continue;const mesh=new THREE.InstancedMesh(cube,materials[kind],data.length);count+=data.length;data.forEach((b,i)=>{dummy.position.set(b[0],b[1],b[2]);dummy.scale.set(b[3],b[4],b[5]);dummy.rotation.set(0,b[7],0);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);mesh.setColorAt(i,new THREE.Color(b[6]));});mesh.castShadow=kind==='solid';mesh.receiveShadow=true;mesh.instanceMatrix.needsUpdate=true;mesh.instanceColor.needsUpdate=true;mesh.computeBoundingSphere();group.add(mesh)}return count}
+function terrain(surface,side,height=()=>0){for(let x=-21;x<=21;x++)for(let z=-17;z<=17;z++){if(!island(x,z))continue;let h=height(x,z);box(x,(h-2.5)/2,z,.99,h+2.5,.99,pick(side));box(x,h+.08,z,.99,.2,.99,pick(surface));}}
+function snowyPine(x,z,h){box(x,h/2,z,.45,h,.45,'#6d6564');for(let k=0;k<4;k++){let y=h*.35+k*h*.18,r=h*.32*(1-k*.21);for(let a=-r;a<=r;a+=.5)for(let b=-r;b<=r;b+=.5){if(Math.abs(a)+Math.abs(b)>r*1.45)continue;let yy=y+Math.max(0,r-Math.max(Math.abs(a),Math.abs(b)))*.5;v(x+a,yy,z+b,.54,pick(['#426d74','#53848b','#699496']));box(x+a,yy+.32,z+b,.55,.16,.55,pick(['#edf5f4','#d1e4e9','#ffffff']));}}}
+function chalet(x,z,w,d,h){
+ box(x,h/2,z,w,h,d,'#815e50');
+ for(let y=.4;y<h;y+=.44){box(x,y,z+d/2+.05,w+.25,.14,.18,'#ae8870');box(x+w/2+.05,y,z,.18,.14,d+.25,'#b69175')}
+ for(let side of [-1,1])for(let i=-w/2+1;i<w/2;i+=1.9){box(x+i,h*.57,z+side*(d/2+.11),1.1,1.35,.12,'#ffcd7c','glow');box(x+i,h*.57,z+side*(d/2+.2),.08,1.45,.1,'#5e5554');box(x+i,h*.57,z+side*(d/2+.2),1.2,.08,.1,'#5e5554')}
+ box(x,h*.24,z+d/2+.2,1.05,h*.48,.3,'#514d50');v(x+.3,.9,z+d/2+.4,.1,'#e7bd65');
+ for(let a=-w/2-.7;a<=w/2+.7;a+=.42){let yy=h+(w/2+.7-Math.abs(a))*.85;for(let b=-d/2-.7;b<=d/2+.7;b+=.42){box(x+a,yy,z+b,.44,.26,.44,'#596d77');box(x+a,yy+.21,z+b,.44,.2,.44,pick(['#e7f1f1','#f6f9f6','#cadfe8']))}}
+ box(x-w*.24,h+2,z-d*.17,.8,3,.8,'#ac8778');box(x-w*.24,h+3.55,z-d*.17,1,.2,1,'#e7ece8');
+ for(let s of [-1,1])box(x+s*(w/2-.25),.7,z+d/2+1,.22,1.4,.22,'#8e7162');box(x,.35,z+d/2+1,w+.6,.3,2,'#b59d86');
+}
+function alpine(){
+ terrain(['#e1ecef','#edf4f2','#d6e5eb','#f5f7f2'],['#8596a8','#9eafbb','#b3c2cc']);
+ // Layered mountain peaks, capped with snow and streaked with blue rock.
+ for(const [cx,cz,r,h] of [[-13,-10,6.5,14],[-2,-12,7,19],[10,-11,6,13]])for(let x=-r;x<=r;x+=.8)for(let z=-r;z<=r;z+=.8){if(!island(cx+x,cz+z))continue;let q=Math.max(Math.abs(x),Math.abs(z));if(q>r)continue;let ht=Math.max(.2,h*(1-q/r)+(rnd()-.5)*1.1);box(cx+x,ht/2,cz+z,.82,ht,.82,pick(['#8198af','#9eb2c3','#bdcbd5','#728ba3']));box(cx+x,ht+.12,cz+z,.84,.35,.84,pick(['#f5f8f5','#dfedf0','#d0e2eb']))}
+ // Frozen lake with alternating blue ice and broken white shore.
+ for(let x=3;x<18;x+=.7)for(let z=3;z<13;z+=.7){if(((x-10)/7.3)**2+((z-8)/5.1)**2>1)continue;box(x,.22,z,.7,.12,.7,pick(['#86bdcc','#a8d5df','#75afc4','#b4dfe4']),'water');if(rnd()<.1)box(x,.3,z,.64,.025,.035,'#e3f3f3')}
+ chalet(-6,1,7.4,6,5.1);chalet(8,-3,5,4,3.8);
+ for(let [x,z,h] of [[-17,-1,9],[-14,5,7],[-17,11,6],[-2,9,5],[17,-5,7],[18,1,6],[1,-3,6],[-10,12,4]])snowyPine(x,z,h);
+ for(let i=0;i<22;i++){let z=5+i*.43;box(-6+Math.sin(i*.17)*.8,.24,z,.95,.1,.32,'#bbc8c9')}
+ // Timber footbridge across the frozen inlet, fence, supplies and sled.
+ for(let i=0;i<15;i++)box(i*.5+1,.75,7,.47,.19,2,'#b08e70');for(let x=1;x<8;x+=1.1)for(let z of [6,8]){box(x,1.2,z,.15,1.1,.15,'#8a6b5c');box(x,1.7,z,1.2,.13,.14,'#ac866b')}
+ for(let z=-4;z<12;z+=1.4){box(-19,1,z,.2,1.5,.2,'#9c8375');box(-19,1.4,z+.6,.15,.13,1.5,'#b49c85')}
+ for(let i=0;i<5;i++)box(-11,.4+i*.24,1,1.3,.22,.7,'#a58a74');
+ for(let x of [-8.6,-7.2])box(x,.4,8.5,.15,.16,2,'#733e3b');for(let z=7.9;z<9.2;z+=.3)box(-7.9,.7,z,1.7,.2,.22,'#c26356');
+ // Snowman: cube snowballs, scarf, carrot, coal and tall hat.
+ v(-1.3,.85,5,1.2,'#f8f6e9');v(-1.3,1.8,5,.85,'#f7f5e8');box(-1.3,1.45,5,.98,.18,.98,'#d57467');box(-1,1.1,5.64,.2,.6,.14,'#d57467');box(-1.3,2.28,5,1.05,.15,1.05,'#38475c');v(-1.3,2.59,5,.63,'#38475c');for(let x of [-1.48,-1.12])v(x,1.94,5.44,.1,'#3b4c60');box(-1.3,1.78,5.57,.12,.12,.35,'#e39a52');
+ for(let i=0;i<45;i++){let x=-19+rnd()*38,z=-14+rnd()*28;if(island(x,z)&&z>4)v(x,.29,z,.18,'#c5d8e2')}
+}
+function palm(x,z,h){for(let i=0;i<h/.45;i++)box(x+Math.sin(i*.1)*.5,.3+i*.45,z,.4,.46,.4,pick(['#b89870','#c5a57b','#94785e']));let cx=x+Math.sin(h/.45*.1)*.5;for(let k=0;k<7;k++){let a=k*Math.PI*2/7;for(let j=0;j<8;j++){let r=j*.43,y=h+.7+Math.sin(j/7*Math.PI)*.7-j*.15;box(cx+Math.cos(a)*r,y,z+Math.sin(a)*r,.65,.18,.7,pick(['#5b9e76','#78b083','#42876b']))}}for(let i=0;i<3;i++)v(cx+(i-1)*.35,h,z,.4,'#a87c52')}
+function riviera(){
+ terrain(['#cfb98b','#ddc99e','#e9d6ad'],['#b5a588','#c7b99a','#d7c9a7']);
+ for(let x=-21;x<=21;x++)for(let z=0;z<=17;z++){if(!island(x,z))continue;let shore=2+Math.sin(x*.17)*2;if(z>shore){box(x,.22,z,.99,.3,.99,pick(['#48a9b7','#60bdc3','#77cccb','#399aaa']),'water');if(rnd()<.16)box(x,.39,z,.6,.03,.09,'#b9e5dc','water')}}
+ // Painted fishing village on the upper terrace.
+ for(const [x,z,w,h,c] of [[-11,-5,5,5,'#f1d5b3'],[-5,-8,5,7,'#f2e5c9'],[1,-6,5,4.5,'#eaa38b'],[-12,-11,4,6,'#efc578']]){
+ box(x,h/2+.3,z,w,h,4.5,c);box(x,h+.35,z,w+.3,.25,4.8,'#f7e7cc');
+ for(let xx=-w/2-.3;xx<=w/2+.3;xx+=.4)for(let zz=-2.6;zz<=2.6;zz+=.4)box(x+xx,h+.5+(2.6-Math.abs(zz))*.45,z+zz,.39,.22,.39,pick(['#c16b50','#d7865f','#d99669']));
+ for(let yy=1.4;yy<h;yy+=2)for(let xx=-w/2+1;xx<w/2;xx+=1.7){box(x+xx,yy,z+2.3,.75,1.1,.1,'#426f80');for(let s of [-1,1])box(x+xx+s*.48,yy,z+2.4,.22,1.2,.16,'#6ca7a6');box(x+xx,yy-.65,z+2.55,1.2,.18,.5,'#c7aa82');for(let k=0;k<4;k++)v(x+xx-.35+k*.23,yy-.45,z+2.6,.24,pick(['#d97fa1','#ecaaa9','#749b67']))}
+ box(x,.95,z+2.35,1,1.8,.15,'#638782');
+ }
+ // Lighthouse, alternating ivory and coral masonry bands with a glass lantern.
+ for(let y=0;y<15;y+=.5){let r=2.3-y*.045;for(let x=-r;x<=r;x+=.5)for(let z=-r;z<=r;z+=.5)if(x*x+z*z<r*r)box(10+x,y+.4,-6+z,.5,.5,.5,Math.floor(y/2.5)%2?'#d87864':'#f1e7ce')}
+ box(10,15.5,-6,4.8,.35,4.8,'#4c7c83');box(10,16.7,-6,2.8,2.1,2.8,'#ffe4a2','glow');for(let x of [-1.5,1.5])for(let z of [-1.5,1.5])box(10+x,16.7,-6+z,.16,2.5,.16,'#587d82');for(let i=0;i<5;i++)box(10,18+i*.3,-6,4.3-i*.7,.3,4.3-i*.7,'#477381');box(10,20.1,-6,.15,1.3,.15,'#d6b66e');
+ for(let a=0;a<24;a++){let t=a/24*Math.PI*2;box(10+Math.cos(t)*2.3,16,-6+Math.sin(t)*2.3,.13,.85,.13,'#648c8d')}
+ // Pier, bollards, sailboats and beach umbrellas.
+ for(let z=2;z<12;z+=.45)box(-3,.85,z,3,.2,.42,'#b79772');for(let z=2;z<12;z+=2)for(let x of [-4.4,-1.6]){box(x,.55,z,.25,1.6,.25,'#826e5c');v(x,1.4,z,.35,'#e9d8ae')}
+ function boat(x,z,c){for(let j=-3;j<=3;j++){let w=(3.5-Math.abs(j))*.45;box(x,.6,z+j*.45,w,.35,.43,c)}box(x,3.4,z,.09,5.5,.09,'#e6d4aa');for(let j=0;j<10;j++)box(x+.1+(10-j)*.11,1.5+j*.4,z,(10-j)*.22,.39,.09,j%3?'#fff2d4':'#e4b86b')}
+ boat(4,8,'#d78066');boat(-10,10,'#546d9e');boat(14,9,'#e5d9b4');
+ palm(-17,-3,6);palm(17,-2,6.7);palm(3,-12,5.5);
+ for(let [x,z,c] of [[-15,1,'#db856e'],[17,2,'#698eb2']]){box(x,1.3,z,.12,2.5,.12,'#b49371');for(let a=-1.6;a<=1.6;a+=.4)for(let b=-1.6;b<=1.6;b+=.4)box(x+a,2.6+(1.6-Math.max(Math.abs(a),Math.abs(b)))*.4,z+b,.4,.16,.4,(Math.round(a/.4)+Math.round(b/.4))%2?c:'#f7e7c8');box(x+.3,.36,z+1.9,.9,.22,1.8,'#f1dcbb')}
+ for(let i=0;i<70;i++){let x=-19+rnd()*38,z=-14+rnd()*13;if(island(x,z)&&rnd()<.6)v(x,.4,z,.35,pick(['#85a987','#c6b892','#c994b2']))}
+}
+function neon(){
+ terrain(['#354352','#3e4a5d','#485266'],['#273244','#3e465c','#536079']);
+ // Wet streets with pixel lane markings and light reflecting from the curbs.
+ box(0,.25,7,39,.18,6,'#253443','water');box(8,.25,-3,5,.18,23,'#253443','water');for(let x=-19;x<20;x+=2){box(x,.36,7,.95,.05,.1,'#d8c29c');box(x,.38,4.2,1.6,.04,.12,'#68c8df','glow')}
+ for(let z=4.5;z<9.5;z+=.6)box(6,.39,z,2.8,.06,.3,'#c3c7d0');
+ const buildings=[[-12,-7,7,6,13,'#516078'],[-3,-8,6,7,22,'#3d4a66'],[15,-9,6,6,16,'#695a7d'],[-13,0,6,4,7,'#735a72'],[0,0,5,4,10,'#4e6976'],[15,0,5,4,9,'#655774'],[-12,13,7,3,4,'#66586e'],[1,13,6,3,5,'#486472']];
+ for(let [x,z,w,d,h,c] of buildings){
+ box(x,h/2+.3,z,w,h,d,c);box(x,h+.4,z,w+.4,.35,d+.4,'#2b354c');
+ for(let yy=1.3;yy<h-.6;yy+=.85)for(let xx=-w/2+.6;xx<w/2;xx+=.8){box(x+xx,yy,z+d/2+.06,.42,.37,.08,pick(['#72cde0','#a8a6dc','#e5b07c','#44516a','#4b5570']),'glow');}
+ for(let yy=1.3;yy<h-.6;yy+=.85)for(let zz=-d/2+.6;zz<d/2;zz+=.8)box(x+w/2+.06,yy,z+zz,.08,.37,.42,pick(['#87bbd6','#b9a1d9','#e8c390','#414c64']),'glow');
+ for(let sx of [-1,1])box(x+sx*w/2,h/2+.4,z+d/2+.13,.12,h,.12,x<0?'#b47ce8':'#6bdbdf','glow');
+ box(x+.8,h+1,z,1.4,1.2,1.7,'#8b92a4');for(let i=0;i<5;i++)box(x+.8,h+1.65,z-.6+i*.3,1.1,.09,.1,'#414c62');box(x-1.4,h+1.7,z-1,.12,3,.12,'#9ea9b6');v(x-1.4,h+3.3,z-1,.25,'#ef83bc','glow');
+ if(h>12){box(x,h*.7,z+d/2+.35,w*.65,2.2,.4,'#222a44');for(let i=0;i<5;i++){box(x-w*.24+i*w*.12,h*.7,z+d/2+.6,.17,1.5,.1,'#ef8bd4','glow');box(x-w*.24+i*w*.12,h*.7+.3,z+d/2+.63,.4,.13,.1,'#7be4df','glow')}}
+ }
+ // Elevated skybridge between the two tallest towers.
+ box(5.9,11.5,-8,14,.55,2.3,'#536c86');box(5.9,12.4,-6.9,14,.08,.08,'#70d4df','glow');for(let x=0;x<13;x+=.7)box(x,11.95,-6.9,.08,1,.08,'#95a7bc');
+ // Rooftop landing pad, luminous ring constructed from squared pixels.
+ for(let x=-2.4;x<2.5;x+=.4)for(let z=-2.4;z<2.5;z+=.4){let r=Math.hypot(x,z);if(r>1.7&&r<2.3)box(-3+x,22.62,-8+z,.36,.1,.36,'#78d4d8','glow')}
+ box(-3,22.7,-8,1.5,.08,.18,'#efc2e5','glow');for(let x of [-3.65,-2.35])box(x,22.7,-8,.18,.08,1.5,'#efc2e5','glow');
+ // Noodle kiosk, striped canopy and hanging cube lanterns.
+ box(-8,1.4,12,3.4,2.6,2.5,'#7f5969');for(let i=0;i<10;i++)box(-9.8+i*.4,2.9,13.4,.38,.22,2,i%2?'#6dc8ce':'#dba2c2');for(let x of [-9,-8,-7])v(x,2.1,14,.4,'#ffc48b','glow');box(-8,1,13.4,3,.2,.6,'#b38c94');
+ // Small electric taxis with headlamps and taillights.
+ for(let [x,z,c] of [[-5,7,'#c6a86c'],[13,8,'#9a7bac'],[-15,6,'#5f9fad']]){box(x,.9,z,2.6,.65,1.3,c);box(x,1.45,z,1.3,.6,1.15,'#6e94ac');for(let sx of [-1,1])for(let sz of [-1,1])v(x+sx*.85,.65,z+sz*.62,.35,'#253144');for(let sz of [-.4,.4])box(x+1.32,.95,z+sz,.06,.22,.3,'#f2d8ae','glow')}
+ for(let x=-18;x<19;x+=6)for(let z of [3.4,10.6]){box(x,2.2,z,.13,4,.13,'#8c9eaf');box(x+.5,4.2,z,1.15,.16,.3,'#94dce4','glow');box(x,.4,z,.6,.4,.6,'#687281')}
+ for(let i=0;i<60;i++){let x=-19+rnd()*38,z=5+rnd()*4;box(x,.37,z,.08,.03,.5+rnd(),pick(['#736b9f','#528c9d','#ab7396']),'water')}
+}
+function getWorld(index){if(worldCache.has(index))return worldCache.get(index);seed=SEED+index*1117;for(const key of Object.keys(batches))batches[key]=[];[null,alpine,riviera,neon][index]();const group=new THREE.Group();group.name=worlds[index].id;const count=bakeWorld(group);group.visible=false;scene.add(group);const record={group,count};worldCache.set(index,record);return record}
+function updateEffects(){petalMesh.visible=motion;drops.visible=motion&&activeWorld===0;petalMesh.material.color.set(worlds[activeWorld].particle);petalBtn.querySelector('span').textContent=worlds[activeWorld].effect;petalBtn.title='Toggle scene animation (P)'}
+function switchWorld(index){if(index===activeWorld)return;const next=getWorld(index);worldCache.get(activeWorld).group.visible=false;next.group.visible=true;activeWorld=index;voxelCount=next.count;const w=worlds[index];document.querySelector('h1').innerHTML=w.name+'<span>'+w.sub+'</span>';document.querySelector('header p').innerHTML=w.desc;document.querySelector('footer b').textContent=w.label;document.getElementById('voxelCount').textContent=voxelCount.toLocaleString()+' colorful blocks · World 0'+(index+1);document.querySelector('.edition div').innerHTML='Voxel atlas<br>World 0'+(index+1)+' / 04';document.querySelectorAll('.scene-button').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===index)));document.title=w.name+' — Voxel Atlas';targetAz=.69;targetEl=.57;targetZoom=1;auto=false;orbitBtn.setAttribute('aria-pressed','false');updateEffects();lightMode=w.mode;applyLighting();renderer.shadowMap.needsUpdate=true;history.replaceState(null,'','#'+w.id);toast(w.zh+' · '+w.name)}
+const selector=document.getElementById('sceneSelector');worlds.forEach((w,i)=>{const b=document.createElement('button');b.className='scene-button';b.setAttribute('aria-pressed',String(i===0));b.setAttribute('aria-label',w.zh+' '+w.name);b.innerHTML='<span class="scene-swatch" style="--swatch:'+w.accent+'">0'+(i+1)+'</span><span><strong>'+w.name+'</strong><small>'+w.zh+'</small></span><span class="scene-dot"></span>';b.onclick=()=>switchWorld(i);selector.appendChild(b)});
+addEventListener('keydown',e=>{if(/^[1-4]$/.test(e.key))switchWorld(Number(e.key)-1)});
+const initialWorld=worlds.findIndex(w=>w.id===location.hash.slice(1));if(initialWorld>0)switchWorld(initialWorld);
+
 let last=performance.now(),time=0,first=true;
 function animate(now){requestAnimationFrame(animate);let dt=Math.min((now-last)/1000,.05);last=now;if(document.hidden)return;if(motion)time+=dt;if(auto)targetAz+=dt*.1;let ease=1-Math.exp(-dt*8);az+=(targetAz-az)*ease;el+=(targetEl-el)*ease;zoom+=(targetZoom-zoom)*ease;camera.position.set(center.x+80*Math.cos(el)*Math.sin(az),center.y+80*Math.sin(el),center.z+80*Math.cos(el)*Math.cos(az));camera.lookAt(center);camera.zoom=zoom;camera.updateProjectionMatrix();
- if(motion||first){petals.forEach((p,i)=>{let y=14-((time*p.speed+p.y)%14);dummy.position.set(p.x+Math.sin(time*.36+p.phase)*1.4,y,p.z+Math.cos(time*.25+p.phase)*1.3);dummy.scale.set(p.s,.035,p.s*.75);dummy.rotation.set(time*.6+p.phase,time*.35+p.phase,time*.4);dummy.updateMatrix();petalMesh.setMatrixAt(i,dummy.matrix)});petalMesh.instanceMatrix.needsUpdate=true;
+ if(motion||first){petals.forEach((p,i)=>{let y=activeWorld===2?1.5+Math.sin(time*.4+p.phase)*.6:20-((time*p.speed*(activeWorld===3?8:1)+p.y)%20);dummy.position.set(p.x+Math.sin(time*.36+p.phase)*1.4,y,p.z+Math.cos(time*.25+p.phase)*1.3);dummy.scale.set(activeWorld===3?.025:p.s,activeWorld===3?.65:activeWorld===1?p.s:.035,activeWorld===3?.025:p.s*.75);dummy.rotation.set(activeWorld===3?0:time*.6+p.phase,activeWorld===3?0:time*.35+p.phase,activeWorld===3?-.12:time*.4);dummy.updateMatrix();petalMesh.setMatrixAt(i,dummy.matrix)});petalMesh.instanceMatrix.needsUpdate=true;
  koi.forEach(f=>{let t=time*.24+f.phase;f.g.position.x=f.cx+Math.cos(t)*1.15;f.g.position.z=f.cz+Math.sin(t)*.65;f.g.rotation.y=Math.atan2(-Math.sin(t)*1.15,Math.cos(t)*.65)});
  for(let i=0;i<24;i++){dummy.position.set(13.6+(i%7)*.27,3.4-((time*2.5+i*.31)%3.3),-6.47);dummy.scale.set(.07,.17,.08);dummy.rotation.set(0,0,0);dummy.updateMatrix();drops.setMatrixAt(i,dummy.matrix)}drops.instanceMatrix.needsUpdate=true;}
- renderer.render(scene,camera);if(first){first=false;renderer.shadowMap.autoUpdate=false;document.getElementById('loading').classList.add('done');setTimeout(()=>document.getElementById('loading').remove(),700);window.hanami={scene,camera,renderer,voxelCount,get lightMode(){return lightMode},get motion(){return motion},get auto(){return auto}};}
+ renderer.render(scene,camera);if(first){first=false;renderer.shadowMap.autoUpdate=false;document.getElementById('loading').classList.add('done');setTimeout(()=>document.getElementById('loading').remove(),700);window.hanami={scene,camera,renderer,switchWorld,worldCache,get activeWorld(){return activeWorld},get voxelCount(){return voxelCount},get lightMode(){return lightMode},get motion(){return motion},get auto(){return auto}};}
 }
 requestAnimationFrame(animate);
 } catch(error) { document.getElementById('loading').innerHTML='<p>The garden needs WebGL to bloom.</p><small>Please open in a browser with hardware acceleration.</small>';console.error(error); }
